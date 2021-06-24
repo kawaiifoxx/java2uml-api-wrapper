@@ -1,0 +1,31 @@
+{
+  "name": "java2uml-api-wrapper",
+  "version": "1.0.0",
+  "description": "An API client for java2uml-api",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kawaiifoxx/java2uml-api-wrapper.git"
+  },
+  "keywords": [
+    "java2uml-api",
+    "wrapper"
+  ],
+  "author": "kawaiifox <shreyanshg06@gmail.com> (https://github.com/kawaiifoxx)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/kawaiifoxx/java2uml-api-wrapper/issues"
+  },
+  "homepage": "https://github.com/kawaiifoxx/java2uml-api-wrapper#readme",
+  "devDependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.29.0",
+    "jest": "^27.0.5",
+    "jsdoc": "^3.6.7",
+    "typescript": "^4.3.4"
+  }
+}
