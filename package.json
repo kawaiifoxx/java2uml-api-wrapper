@@ -29,6 +29,8 @@
     "typescript": "^4.3.4"
   },
   "dependencies": {
+    "@types/lokijs": "^1.5.4",
+    "lokijs": "^1.5.12",
     "winston": "^3.3.3"
   }
 }
