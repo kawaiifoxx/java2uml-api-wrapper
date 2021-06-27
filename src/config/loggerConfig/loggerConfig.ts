@@ -5,9 +5,13 @@ import {LoggerOptionsBuilder} from "./loggerOptionsBuilder";
 
 const optionsBuilder = new LoggerOptionsBuilder()
 
-export const logger = winston.createLogger(
+/**
+ * This is default logger.
+ */
+export const logger = winston.loggers.add(
+    "default",
     optionsBuilder
-        .withFormat(loggerFormatConfigurer("MAIN", consolePrintingFormat))
+        .withFormat(loggerFormatConfigurer("J2U WRAPPER", consolePrintingFormat))
         .withLevel("info")
         .withTransports(...transports)
         .build()
