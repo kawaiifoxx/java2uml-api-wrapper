@@ -1,4 +1,4 @@
-import winston, {error, format} from "winston";
+import winston, {format} from "winston";
 
 
 /**
@@ -23,12 +23,12 @@ export const consolePrintingFormat = format.printf(info => `${info.timestamp} ${
  * @param label Label to be printed when using this format.
  * @param additionalFormats Extra formats if any.
  */
-export default function loggerFormatConfigurer(label: string, additionalFormats: winston.Logform.Format[] = []) {
+export default function loggerFormatConfigurer(label: string, ...additionalFormats: winston.Logform.Format[]) {
     return format.combine(
-        format.colorize({all: true, colors: {'info': 'blue', 'warn': 'yellow', 'error': 'red', 'debug': 'purple'}}),
+        format.colorize({all: true, colors: {'info': 'green', 'warn': 'yellow', 'error': 'red', 'debug': 'blue'}}),
         format.timestamp(),
         format.label({label: label}),
-        error({stack: true}).format,
+        format.errors({stack: true}),
         ignoreFormat,
         ...additionalFormats
     )
