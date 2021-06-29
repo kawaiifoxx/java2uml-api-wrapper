@@ -6,4 +6,7 @@ import {LightWeight} from "./LightWeight";
  * @author kawaiifoxx
  */
 export interface Field extends LightWeight {
+    typeName: string
+    visibility: string
+    isStatic: boolean
 }

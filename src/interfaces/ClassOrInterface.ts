@@ -7,6 +7,7 @@ import {LightWeight} from "./LightWeight";
  */
 export interface ClassOrInterface extends LightWeight {
     packageName: string
-    isClass: string
-    isExternal: string
+    isClass: boolean
+    isExternal: boolean
+    body?: Body
 }
