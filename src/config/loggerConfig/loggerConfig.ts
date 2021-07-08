@@ -9,7 +9,7 @@ const optionsBuilder = new LoggerOptionsBuilder()
  * Create logger with provided config.
  * @param id id of logger
  * @param label label of logger.
- * @param level Set Logging level.
+ * @param level ["info" | "warn" | "error" | "debug"] Set Logging level. (default - "info")
  */
 function createLogger(id: string, label: string = id, level: "info" | "warn" | "error" | "debug" = "info"): Logger {
     return winston.loggers.add(
@@ -25,4 +25,4 @@ function createLogger(id: string, label: string = id, level: "info" | "warn" | "
 /**
  * This is default logger.
  */
-export const logger = createLogger("default", "J2U WRAPPER");
+export const defaultLogger = createLogger("default", "J2U WRAPPER");
