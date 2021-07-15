@@ -5,5 +5,5 @@
  */
 export interface EntityModel<T> {
     content: T
-    _links: Map<string, string>
+    _links: Map<string, Map<'href', string>>
 }
