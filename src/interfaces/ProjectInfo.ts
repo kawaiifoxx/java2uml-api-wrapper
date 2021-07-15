@@ -4,6 +4,7 @@
 import {Source} from "./Source";
 
 export interface ProjectInfo {
+    id: number
     projectName: string
     size: number
     fileType: string
