@@ -11,6 +11,7 @@ import {Field} from "../interfaces/Field";
 import {Body} from "../interfaces/Body";
 import {EnumConstant} from "../interfaces/EnumConstant";
 import {CallGraphRelation} from "../interfaces/CallGraphRelation";
+import {ReadStream} from "fs";
 
 /**
  * A class for interacting with Java2UML API
@@ -19,8 +20,12 @@ export interface Java2UML {
     /**
      * Upload java source code to Java2UMl API
      * @param file Zip file containing Java Code Base
+     * @param onProgress  allows handling of progress events for uploads
      */
-    upload(file: File): Promise<EntityModel<ProjectInfo>>
+    upload(
+        file: File | ReadStream,
+        onProgress: (progressEvent: ProgressEvent) => void
+    ): Promise<EntityModel<ProjectInfo>>
 
     /**
      * Get uploaded project information.
