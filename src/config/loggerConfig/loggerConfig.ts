@@ -22,7 +22,23 @@ function createLogger(id: string, label: string = id, level: "info" | "warn" | "
     );
 }
 
+
+
+/*================================================================================*
+ *                           LOGGER DECLARATIONS                                  *
+ *================================================================================*/
+
 /**
  * This is default logger.
  */
 export const defaultLogger = createLogger("default", "J2U WRAPPER");
+
+/**
+ * Java2UML Logger
+ */
+export const j2ULogger = createLogger("j2u", "Java2UMLImpl")
+
+/**
+ * Unit Tests logger
+ */
+export const jestLogger = createLogger("JEST", "Unit Test")
