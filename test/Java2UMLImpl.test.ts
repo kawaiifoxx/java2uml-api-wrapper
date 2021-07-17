@@ -53,13 +53,7 @@ describe(`When using J2U.upload(), `, () => {
 describe('When using J2U.getProjectInfo(),', () => {
     const j2u = new Java2UMLImpl(J2U_CONFIG)
 
-    beforeEach(done => {
-        j2u.upload((createReadStream(TEST_FILE))).then(() => done()).catch(() => {
-            jestLogger.error(`Unable To upload files, please check if Java2UML server is running  at ${J2U_CONFIG.baseURL}`)
-            expect(false).toBeTruthy()
-            done()
-        })
-    })
+    beforeEach(done => setUp(j2u, done))
 
     test('should get project info if file has been uploaded.', async () => {
         try {
@@ -84,5 +78,72 @@ describe('When using J2U.getProjectInfo(),', () => {
             jestLogger.info(e)
             expect(e).toBeInstanceOf(Error)
         }
+    })
+})
+
+
+function setUp(j2u: Java2UMLImpl, done: jest.DoneCallback) {
+    j2u.upload((createReadStream(TEST_FILE))).then(() => done()).catch(() => {
+        jestLogger.error(`Unable To upload files, please check if Java2UML server is running  at ${J2U_CONFIG.baseURL}`)
+        expect(false).toBeTruthy()
+        done()
+    })
+}
+
+describe('When using J2U.getSource(),', () => {
+    const j2u = new Java2UMLImpl(J2U_CONFIG)
+    beforeEach(done => setUp(j2u, done))
+    jest.setTimeout(1000 * 20)
+
+    test('should get valid source, when uploading valid java source code.', async () => {
+        const source = await j2u.getSource()
+        expect(source).toBeDefined()
+        expect(source).toHaveProperty("content")
+        expect(source).toHaveProperty("_links")
+        expect(source.content).toHaveProperty("id")
+        jestLogger.info(source)
+    })
+
+})
+
+
+describe('All Get requests.', () => {
+    const j2u = new Java2UMLImpl(J2U_CONFIG)
+    beforeAll(done => {
+        setUp(j2u, done)
+        j2u.getSource(100).then(done)
+    })
+
+    jest.setTimeout(1000 * 60)
+
+    describe('When using J2U.getPUMLCode()', () => {
+        test('should get valid puml code, when project info has been setup', async () => {
+            const pumlCode = await j2u.getPlantUMLCode()
+
+            expect(pumlCode).toBeDefined()
+            expect(pumlCode.content).toHaveProperty("content")
+        })
+    })
+
+    describe('When using J2U.getSvg()', () => {
+        test('should get valid svg, when project info has been setup', async () => {
+            const svg = await j2u.getUMLSvg(20)
+            expect(svg).toBeDefined()
+        })
+    })
+
+    describe('When using J2U.getClassOrInterface()', () => {
+        test('should get valid list, when source has been setup', async () => {
+            const classOrInterfaceList = await j2u.getClassOrInterfaces()
+
+            expect(classOrInterfaceList).toBeDefined()
+            expect(classOrInterfaceList.content).toBeInstanceOf(Array)
+            expect(classOrInterfaceList.content[0].content).toHaveProperty("id")
+            expect(classOrInterfaceList.content[0].content).toHaveProperty("name")
+            expect(classOrInterfaceList.content[0].content).toHaveProperty("packageName")
+            expect(classOrInterfaceList.content[0].content).toHaveProperty("isGeneric")
+            expect(classOrInterfaceList.content[0].content).toHaveProperty("isClass")
+            expect(classOrInterfaceList.content[0].content).toHaveProperty("isExternal")
+        })
     })
 })
