@@ -34,18 +34,20 @@ export interface Java2UML {
 
     /**
      * Get source of project.
+     * @param retryLimit No of times to retry before throwing exception for 202 HTTP.
      */
-    getSource(): Promise<EntityModel<Source>>
+    getSource(retryLimit: number): Promise<EntityModel<Source>>
 
     /**
      * Get generated plant uml code.
+     * @param retryLimit No of times to retry before throwing exception for 202 HTTP.
      */
-    getPlantUMLCode(): Promise<EntityModel<UMLBody>>
+    getPlantUMLCode(retryLimit: number): Promise<EntityModel<UMLBody>>
 
     /**
      * Get all the classes and interfaces present in parsed java code base.
      */
-    getClassOrInterfaces(): Promise<EntityModel<ClassOrInterface>[]>
+    getClassOrInterfaces(): Promise<EntityModel<EntityModel<ClassOrInterface>[]>>
 
     /**
      * Get all the {@link Enum}s present in parsed java code base.
@@ -137,8 +139,10 @@ export interface Java2UML {
 
     /**
      * Get generated class diagram in SVG format.
+     *
+     * @param retryLimit No of times to retry before throwing exception for 202 HTTP.
      */
-    getUMLSvg(): Promise<File>
+    getUMLSvg(retryLimit: number): Promise<String>
 
     /**
      * Delete parsed java code base on the server.
