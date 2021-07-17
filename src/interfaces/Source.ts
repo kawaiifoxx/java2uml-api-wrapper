@@ -8,5 +8,5 @@ import {LightWeight} from "./LightWeight";
  * @author kawaiifoxx
  */
 export interface Source extends LightWeight {
-    projectInfo: ProjectInfo
+    projectInfo?: ProjectInfo
 }
