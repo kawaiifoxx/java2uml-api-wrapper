@@ -19,30 +19,29 @@ import {EnumConstant} from "../interfaces/EnumConstant";
 import {Body} from "../interfaces/Body";
 import {CallGraphRelation} from "../interfaces/CallGraphRelation";
 
-
-// @ts-ignore
 export class Java2UMLImpl implements Java2UML {
-    private static FILE_UPLOAD = "/files"
-    private static PROJECT_INFO = "/project-info"
-    private static SOURCE = "/source"
-    private static SOURCE_BY_PROJECT_INFO_ID = "/source/by-project-info"
-    private static PUML_CODE = "/uml/plant-uml-code"
-    private static BY_SOURCE = "/by-source"
-    private static CLASS_OR_INTERFACE = "/class-or-interface"
-    private static RELATION = "/relation"
-    private static CLASS_DIAGRAM_SVG = "/uml/svg"
-    private static ENUM = "/enum"
-    private static METHOD = "/method"
-    private static BY_PARENT = "/by-parent"
-    private static CONSTRUCTOR = "/constructor"
-    private static FIELDS = "/field"
-    private static ENUM_CONSTANT = "/enum-constant"
-    private static CODE_SNIPPET = "/body"
-    private static CALL_GRAPH = "/call-graph"
+    private static readonly FILE_UPLOAD = "/files"
+    private static readonly PROJECT_INFO = "/project-info"
+    private static readonly SOURCE = "/source"
+    private static readonly SOURCE_BY_PROJECT_INFO_ID = "/source/by-project-info"
+    private static readonly PUML_CODE = "/uml/plant-uml-code"
+    private static readonly BY_SOURCE = "/by-source"
+    private static readonly CLASS_OR_INTERFACE = "/class-or-interface"
+    private static readonly RELATION = "/relation"
+    private static readonly CLASS_DIAGRAM_SVG = "/uml/svg"
+    private static readonly ENUM = "/enum"
+    private static readonly METHOD = "/method"
+    private static readonly BY_PARENT = "/by-parent"
+    private static readonly CONSTRUCTOR = "/constructor"
+    private static readonly FIELD = "/field"
+    private static readonly ENUM_CONSTANT = "/enum-constant"
+    private static readonly CODE_SNIPPET = "/body"
+    private static readonly CALL_GRAPH = "/call-graph"
 
     private projectId: number | null = null
     private sourceId: number | null = null
-    private http: AxiosInstance
+    private readonly waitTime: number
+    private readonly http: AxiosInstance
 
     constructor(config: Java2UMLConfig) {
         this.http = axios.create({
@@ -56,6 +55,8 @@ export class Java2UMLImpl implements Java2UML {
             },
             headers: config.headers
         })
+
+        this.waitTime = config.waitTime
     }
 
     async upload(
@@ -224,7 +225,7 @@ export class Java2UMLImpl implements Java2UML {
         await this.getSourceIfNull()
 
         try {
-            const axiosResponse = await this.http.get(`${Java2UMLImpl.FIELDS}${Java2UMLImpl.BY_PARENT}/${id}`)
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.FIELD}${Java2UMLImpl.BY_PARENT}/${id}`)
             return normalizer.normalizeToFieldList(axiosResponse)
         } catch (e) {
             Java2UMLImpl.logError(e)
@@ -256,18 +257,6 @@ export class Java2UMLImpl implements Java2UML {
         }
     }
 
-    async getBody(id: number): Promise<EntityModel<Body>> {
-        await this.getSourceIfNull()
-
-        try {
-            const axiosResponse = await this.http.get(`${Java2UMLImpl.CODE_SNIPPET}/${id}`)
-            return normalizer.normalizeToBody(axiosResponse)
-        } catch (e) {
-            Java2UMLImpl.logError(e)
-            throw e
-        }
-    }
-
     async getCallGraph(id: number, packageName: string = ""): Promise<EntityModel<EntityModel<CallGraphRelation>[]>> {
         await this.getSourceIfNull()
 
@@ -280,6 +269,113 @@ export class Java2UMLImpl implements Java2UML {
         }
     }
 
+    async getBody(id: number): Promise<EntityModel<Body>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.CODE_SNIPPET}/${id}`)
+            return normalizer.normalizeToBody(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getClassOrInterface(id: number): Promise<EntityModel<ClassOrInterface>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.CLASS_OR_INTERFACE}/${id}`)
+            return normalizer.normalizeToClassOrInterface(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getEnum(id: number): Promise<EntityModel<Enum>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.ENUM}/${id}`)
+            return normalizer.normalizeToEnum(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getClassRelation(id: number): Promise<EntityModel<ClassRelation>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.RELATION}/${id}`)
+            return normalizer.normalizeToClassRelation(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getMethod(id: number): Promise<EntityModel<Method>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.METHOD}/${id}`)
+            return normalizer.normalizeToMethod(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getConstructor(id: number): Promise<EntityModel<Constructor>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.CONSTRUCTOR}/${id}`)
+            return normalizer.normalizeToConstructor(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getField(id: number): Promise<EntityModel<Field>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.FIELD}/${id}`)
+            return normalizer.normalizeToField(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getEnumConstant(id: number): Promise<EntityModel<EnumConstant>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.ENUM_CONSTANT}/${id}`)
+            return normalizer.normalizeToEnumConstant(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async delete(): Promise<void> {
+        this.assertThatProjectIdIsNotNull()
+
+        try {
+            const axiosResponse = await this.http.delete(`${Java2UMLImpl.PROJECT_INFO}/${this.projectId}`)
+            if (axiosResponse.status == 204) this.projectId = null
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
 
     /*================================================================================*
      *                              HELPER METHODS                                    *
@@ -301,8 +397,8 @@ export class Java2UMLImpl implements Java2UML {
                 const axiosResponse = await this.http.get(uri)
                 if (axiosResponse.status == 200) return normalize(axiosResponse)
             } catch (_) {
-                await Java2UMLImpl.sleep(500)
-                j2ULogger.info(`${i + 1} try, received STATUS: 202, retrying after 500ms.`)
+                await Java2UMLImpl.sleep(this.waitTime)
+                j2ULogger.info(`${i + 1} try, received STATUS: 202, retrying after ${this.waitTime}ms.`)
             }
         }
 
