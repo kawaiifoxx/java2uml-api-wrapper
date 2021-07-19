@@ -60,6 +60,20 @@ describe(`When using J2U.upload(), `, () => {
 
 })
 
+describe('When using J2U.delete()', () => {
+    const j2u = new Java2UMLImpl(J2U_CONFIG)
+    beforeEach(() => setUp(j2u))
+
+    test('should delete project info, given that files have been uploaded.', async () => {
+        await j2u.delete()
+        try {
+            await j2u.delete()
+            expect(true).toBe(false)
+        } catch (e) {
+            expect(e).toBeInstanceOf(Error)
+        }
+    })
+})
 
 describe('When using J2U.getProjectInfo(),', () => {
     const j2u = new Java2UMLImpl(J2U_CONFIG)
@@ -325,7 +339,6 @@ describe('All Get requests.', () => {
             expectToBeEnumConstant(enumConstant);
         })
     })
-
 
     /*========================================================================*
      *                        ADDITIONAL TEST HELPERS                         *
