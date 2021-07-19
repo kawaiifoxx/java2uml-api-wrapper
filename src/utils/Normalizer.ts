@@ -9,6 +9,9 @@ import {ClassRelation} from "../interfaces/ClassRelation";
 import {Method} from "../interfaces/Method";
 import {Constructor} from "../interfaces/Constructor";
 import {Field} from "../interfaces/Field";
+import {EnumConstant} from "../interfaces/EnumConstant";
+import {Body} from "../interfaces/Body";
+import {CallGraphRelation} from "../interfaces/CallGraphRelation";
 
 /**
  * A set of util functions used to map received json responses to Model Interfaces.
@@ -127,7 +130,7 @@ export namespace normalizer {
      * @param val should have properties which are present in {@link Method}
      * @private
      */
-    function normalizeToMethod(val: AxiosResponse): EntityModel<Method> {
+    export function normalizeToMethod(val: AxiosResponse): EntityModel<Method> {
         return {
             content: {
                 id: val.data.id,
@@ -149,7 +152,7 @@ export namespace normalizer {
      * @param val should have properties which are present in {@link Constructor}
      * @private
      */
-    function normalizeToConstructor(val: AxiosResponse): EntityModel<Constructor> {
+    export function normalizeToConstructor(val: AxiosResponse): EntityModel<Constructor> {
         return {
             content: {
                 id: val.data.id,
@@ -170,7 +173,7 @@ export namespace normalizer {
      * @param val should have properties which are present in {@link Field}
      * @private
      */
-    function normalizeToField(val: AxiosResponse): EntityModel<Field> {
+    export function normalizeToField(val: AxiosResponse): EntityModel<Field> {
         return {
             content: {
                 id: val.data.id,
@@ -178,6 +181,37 @@ export namespace normalizer {
                 name: val.data.name,
                 visibility: val.data.visibility,
                 isStatic: val.data.static
+            },
+            _links: mapOf(val.data._links)
+        }
+    }
+
+    /**
+     * Maps received val to {@link EnumConstant}
+     * @param val should have properties which are present in {@link EnumConstant}
+     * @private
+     */
+    export function normalizeToEnumConstant(val: AxiosResponse): EntityModel<EnumConstant> {
+        return {
+            content: {
+                id: val.data.id,
+                name: val.data.name
+            },
+            _links: mapOf(val.data._links)
+        }
+    }
+
+    /**
+     * Maps received val to {@link EnumConstant}
+     * @param val should have properties which are present in {@link EnumConstant}
+     * @private
+     */
+    export function normalizeToBody(val: AxiosResponse): EntityModel<Body> {
+        return {
+            content: {
+                id: val.data.id,
+                name: 'code',
+                content: val.data.content
             },
             _links: mapOf(val.data._links)
         }
@@ -244,11 +278,48 @@ export namespace normalizer {
         }
     }
 
+    /**
+     * Maps received val to a EntityModel consisting a list of {@link Field}
+     * @param val should contain a list of {@link Field} in _embedded
+     * @private
+     */
     export function normalizeToFieldList(val: AxiosResponse): EntityModel<EntityModel<Field>[]> {
         return {
             content: val.data._embedded.fieldList.map((e: any) => normalizeToField({data: e} as AxiosResponse)),
             _links: mapOf(val.data._links)
-        };
+        }
+    }
+
+    /**
+     * Maps received val to a EntityModel consisting a list of {@link EnumConstant}
+     * @param val should contain a list of {@link EnumConstant} in _embedded
+     * @private
+     */
+    export function normalizeToEnumConstantList(val: AxiosResponse): EntityModel<EntityModel<EnumConstant>[]> {
+        return {
+            content: val.data._embedded.enumConstantList.map((e: any) => normalizeToEnumConstant({data: e} as AxiosResponse)),
+            _links: mapOf(val.data._links)
+        }
+    }
+
+    /**
+     * Maps received val to a EntityModel consisting a list of {@link CallGraphRelation}
+     * @param val should contain a list of {@link CallGraphRelation} in _embedded
+     * @private
+     */
+    export function normalizeToCallGraph(val: AxiosResponse): EntityModel<EntityModel<CallGraphRelation>[]> {
+        return {
+            content: val.data._embedded.callGraphRelationList.map((e: any) => {
+                return {
+                    content: {
+                        from: e.from,
+                        to: e.to
+                    },
+                    _links: mapOf(e._links)
+                } as EntityModel<CallGraphRelation>
+            }),
+            _links: mapOf(val.data._links)
+        }
     }
 
 
