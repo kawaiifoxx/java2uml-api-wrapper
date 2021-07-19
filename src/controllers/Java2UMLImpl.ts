@@ -15,6 +15,9 @@ import {ClassRelation} from "../interfaces/ClassRelation";
 import {Method} from "../interfaces/Method";
 import {Constructor} from "../interfaces/Constructor";
 import {Field} from "../interfaces/Field";
+import {EnumConstant} from "../interfaces/EnumConstant";
+import {Body} from "../interfaces/Body";
+import {CallGraphRelation} from "../interfaces/CallGraphRelation";
 
 
 // @ts-ignore
@@ -31,12 +34,15 @@ export class Java2UMLImpl implements Java2UML {
     private static ENUM = "/enum"
     private static METHOD = "/method"
     private static BY_PARENT = "/by-parent"
-    private static CONSTRUCTOR = "/constructor";
-    private static FIELDS = "/field";
+    private static CONSTRUCTOR = "/constructor"
+    private static FIELDS = "/field"
+    private static ENUM_CONSTANT = "/enum-constant"
+    private static CODE_SNIPPET = "/body"
+    private static CALL_GRAPH = "/call-graph"
 
-    private projectId: number | null = null;
-    private sourceId: number | null = null;
-    private http: AxiosInstance;
+    private projectId: number | null = null
+    private sourceId: number | null = null
+    private http: AxiosInstance
 
     constructor(config: Java2UMLConfig) {
         this.http = axios.create({
@@ -220,6 +226,54 @@ export class Java2UMLImpl implements Java2UML {
         try {
             const axiosResponse = await this.http.get(`${Java2UMLImpl.FIELDS}${Java2UMLImpl.BY_PARENT}/${id}`)
             return normalizer.normalizeToFieldList(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getEnumConstants(id: number): Promise<EntityModel<EntityModel<EnumConstant>[]>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.ENUM_CONSTANT}${Java2UMLImpl.BY_PARENT}/${id}`)
+            return normalizer.normalizeToEnumConstantList(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getBodyByParentId(id: number): Promise<EntityModel<Body>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.CODE_SNIPPET}${Java2UMLImpl.BY_PARENT}/${id}`)
+            return normalizer.normalizeToBody(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getBody(id: number): Promise<EntityModel<Body>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.CODE_SNIPPET}/${id}`)
+            return normalizer.normalizeToBody(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getCallGraph(id: number, packageName: string = ""): Promise<EntityModel<EntityModel<CallGraphRelation>[]>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.CALL_GRAPH}/${id}?package=${packageName}`)
+            return normalizer.normalizeToCallGraph(axiosResponse)
         } catch (e) {
             Java2UMLImpl.logError(e)
             throw e
