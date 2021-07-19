@@ -10,6 +10,11 @@ import {Java2UML} from "./Java2UML";
 import {Source} from "../interfaces/Source";
 import {UMLBody} from "../interfaces/UMLBody";
 import {ClassOrInterface} from "../interfaces/ClassOrInterface";
+import {Enum} from "../interfaces/Enum";
+import {ClassRelation} from "../interfaces/ClassRelation";
+import {Method} from "../interfaces/Method";
+import {Constructor} from "../interfaces/Constructor";
+import {Field} from "../interfaces/Field";
 
 
 // @ts-ignore
@@ -19,9 +24,15 @@ export class Java2UMLImpl implements Java2UML {
     private static SOURCE = "/source"
     private static SOURCE_BY_PROJECT_INFO_ID = "/source/by-project-info"
     private static PUML_CODE = "/uml/plant-uml-code"
-    private static ALL_CLASS_OR_INTERFACE = "/class-or-interface/by-source"
-    private static CLASS_DIAGRAM_SVG = "/uml/svg";
-
+    private static BY_SOURCE = "/by-source"
+    private static CLASS_OR_INTERFACE = "/class-or-interface"
+    private static RELATION = "/relation"
+    private static CLASS_DIAGRAM_SVG = "/uml/svg"
+    private static ENUM = "/enum"
+    private static METHOD = "/method"
+    private static BY_PARENT = "/by-parent"
+    private static CONSTRUCTOR = "/constructor";
+    private static FIELDS = "/field";
 
     private projectId: number | null = null;
     private sourceId: number | null = null;
@@ -144,8 +155,71 @@ export class Java2UMLImpl implements Java2UML {
         await this.getSourceIfNull()
 
         try {
-            const axiosResponse = await this.http.get(Java2UMLImpl.ALL_CLASS_OR_INTERFACE + `/${this.sourceId}`)
+            const axiosResponse =
+                await this.http.get(`${Java2UMLImpl.CLASS_OR_INTERFACE}${Java2UMLImpl.BY_SOURCE}/${this.sourceId}`)
+
             return normalizer.normalizeToClassOrInterfaceList(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getEnums(): Promise<EntityModel<EntityModel<Enum>[]>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.ENUM}${Java2UMLImpl.BY_SOURCE}/${this.sourceId}`)
+            return normalizer.normalizeToEnumList(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getClassRelations(): Promise<EntityModel<EntityModel<ClassRelation>[]>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.RELATION}${Java2UMLImpl.BY_SOURCE}/${this.sourceId}`)
+            return normalizer.normalizeToClassRelationList(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getMethods(id: number): Promise<EntityModel<EntityModel<Method>[]>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.METHOD}${Java2UMLImpl.BY_PARENT}/${id}`)
+            return normalizer.normalizeToMethodList(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+
+    }
+
+    async getConstructors(id: number): Promise<EntityModel<EntityModel<Constructor>[]>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.CONSTRUCTOR}${Java2UMLImpl.BY_PARENT}/${id}`)
+            return normalizer.normalizeToConstructorList(axiosResponse)
+        } catch (e) {
+            Java2UMLImpl.logError(e)
+            throw e
+        }
+    }
+
+    async getFields(id: number): Promise<EntityModel<EntityModel<Field>[]>> {
+        await this.getSourceIfNull()
+
+        try {
+            const axiosResponse = await this.http.get(`${Java2UMLImpl.FIELDS}${Java2UMLImpl.BY_PARENT}/${id}`)
+            return normalizer.normalizeToFieldList(axiosResponse)
         } catch (e) {
             Java2UMLImpl.logError(e)
             throw e
@@ -201,8 +275,7 @@ export class Java2UMLImpl implements Java2UML {
      * @param ms time to sleep in milliseconds.
      * @private
      */
-    private static sleep(ms: number):
-        Promise<void> {
+    private static sleep(ms: number): Promise<void> {
         return new Promise(resolve => setTimeout(resolve, ms))
     }
 
