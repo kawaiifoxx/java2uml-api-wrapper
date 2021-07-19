@@ -9,6 +9,14 @@ import J2U_CONFIG = j2uTestUtils.J2U_CONFIG;
 import TEST_FILE = j2uTestUtils.TEST_FILE;
 import setUp = j2uTestUtils.setUp;
 import extractIdFrom = j2uTestUtils.extractIdFrom;
+import {ClassOrInterface} from "../src/interfaces/ClassOrInterface";
+import {EntityModel} from "../src/interfaces/EntityModel";
+import {Method} from "../src/interfaces/Method";
+import {ClassRelation} from "../src/interfaces/ClassRelation";
+import {Enum} from "../src/interfaces/Enum";
+import {Constructor} from "../src/interfaces/Constructor";
+import {Field} from "../src/interfaces/Field";
+import {EnumConstant} from "../src/interfaces/EnumConstant";
 
 
 describe(`When using J2U.upload(), `, () => {
@@ -56,7 +64,7 @@ describe(`When using J2U.upload(), `, () => {
 describe('When using J2U.getProjectInfo(),', () => {
     const j2u = new Java2UMLImpl(J2U_CONFIG)
 
-    beforeEach(done => setUp(j2u, done))
+    beforeEach(() => setUp(j2u))
 
     test('should get project info if file has been uploaded.', async () => {
         try {
@@ -86,7 +94,7 @@ describe('When using J2U.getProjectInfo(),', () => {
 
 describe('When using J2U.getSource(),', () => {
     const j2u = new Java2UMLImpl(J2U_CONFIG)
-    beforeEach(done => setUp(j2u, done))
+    beforeEach(() => setUp(j2u))
     jest.setTimeout(1000 * 20)
 
     test('should get valid source, when uploading valid java source code.', async () => {
@@ -103,10 +111,7 @@ describe('When using J2U.getSource(),', () => {
 
 describe('All Get requests.', () => {
     const j2u = new Java2UMLImpl(J2U_CONFIG)
-    beforeAll(done => {
-        setUp(j2u, done)
-        j2u.getSource(100).then(done)
-    })
+    beforeAll(() => setUp(j2u).then(() => j2u.getSource(100)))
 
     jest.setTimeout(1000 * 60)
 
@@ -132,12 +137,7 @@ describe('All Get requests.', () => {
 
             expect(classOrInterfaceList).toBeDefined()
             expect(classOrInterfaceList.content).toBeInstanceOf(Array)
-            expect(classOrInterfaceList.content[0].content).toHaveProperty("id")
-            expect(classOrInterfaceList.content[0].content).toHaveProperty("name")
-            expect(classOrInterfaceList.content[0].content).toHaveProperty("packageName")
-            expect(classOrInterfaceList.content[0].content).toHaveProperty("isGeneric")
-            expect(classOrInterfaceList.content[0].content).toHaveProperty("isClass")
-            expect(classOrInterfaceList.content[0].content).toHaveProperty("isExternal")
+            expectToBeClassOrInterface(classOrInterfaceList.content[0])
         })
     })
 
@@ -153,16 +153,13 @@ describe('All Get requests.', () => {
         })
     })
 
-    describe('When using J2U.getClassRelations', () => {
+    describe('When using J2U.getClassRelations()', () => {
         test('should get a valid list of classRelations, when source has been setup', async () => {
             const classRelationList = await j2u.getClassRelations()
 
             expect(classRelationList).toBeDefined()
             expect(classRelationList.content).toBeInstanceOf(Array)
-            expect(classRelationList.content[0].content).toHaveProperty("id")
-            expect(classRelationList.content[0].content).toHaveProperty("relation")
-            expect(classRelationList.content[0].content).toHaveProperty("fromId")
-            expect(classRelationList.content[0].content).toHaveProperty("toId")
+            expectToBeClassRelation(classRelationList.content[0])
         })
     })
 
@@ -175,18 +172,7 @@ describe('All Get requests.', () => {
             expect(methods).toBeDefined()
             expect(methods.content).toBeInstanceOf(Array)
             expect(methods._links).toBeInstanceOf(Map)
-            expect(methods.content[0].content).toHaveProperty("id")
-            expect(methods.content[0].content).toHaveProperty("name")
-            expect(methods.content[0].content).toHaveProperty("returnType")
-            expect(methods.content[0].content).toHaveProperty("signature")
-            expect(methods.content[0].content).toHaveProperty("visibility")
-            expect(methods.content[0].content).toHaveProperty("isStatic")
-            expect(methods.content[0].content).toHaveProperty("parameters")
-            expect(methods.content[0].content).toHaveProperty("typeParameters")
-            expect(methods.content[0].content).toHaveProperty("specifiedExceptions")
-            expect(methods.content[0].content.specifiedExceptions).toBeInstanceOf(Array)
-            expect(methods.content[0].content.parameters).toBeInstanceOf(Array)
-            expect(methods.content[0].content.typeParameters).toBeInstanceOf(Array)
+            expectToBeMethod(methods.content[0])
         })
     })
 
@@ -199,17 +185,8 @@ describe('All Get requests.', () => {
             expect(constructors).toBeDefined()
             expect(constructors.content).toBeInstanceOf(Array)
             expect(constructors._links).toBeInstanceOf(Map)
-            expect(constructors.content[0].content).toHaveProperty("id")
-            expect(constructors.content[0].content).toHaveProperty("name")
-            expect(constructors.content[0].content).toHaveProperty("signature")
-            expect(constructors.content[0].content).toHaveProperty("visibility")
-            expect(constructors.content[0].content).toHaveProperty("compilerGenerated")
-            expect(constructors.content[0].content).toHaveProperty("parameters")
-            expect(constructors.content[0].content).toHaveProperty("typeParameters")
-            expect(constructors.content[0].content).toHaveProperty("specifiedExceptions")
-            expect(constructors.content[0].content.specifiedExceptions).toBeDefined()
-            expect(constructors.content[0].content.specifiedExceptions).toBeInstanceOf(Array)
-            expect(constructors.content[0].content.parameters).toBeInstanceOf(Array)
+
+            expectToBeConstructor(constructors.content[0])
         })
     })
 
@@ -222,11 +199,8 @@ describe('All Get requests.', () => {
             expect(fields).toBeDefined()
             expect(fields.content).toBeInstanceOf(Array)
             expect(fields._links).toBeInstanceOf(Map)
-            expect(fields.content[0].content).toHaveProperty("id")
-            expect(fields.content[0].content).toHaveProperty("typeName")
-            expect(fields.content[0].content).toHaveProperty("name")
-            expect(fields.content[0].content).toHaveProperty("visibility")
-            expect(fields.content[0].content).toHaveProperty("isStatic")
+
+            expectToBeField(fields.content[0])
         })
     })
 
@@ -280,4 +254,175 @@ describe('All Get requests.', () => {
         })
     })
 
+    describe('When using J2U.getClassOrInterface()', () => {
+        test('should get valid classOrInterface, when source has been setup', async () => {
+            const classOrInterfaceList = await j2u.getClassOrInterfaces()
+            const classOrInterface = await j2u.getClassOrInterface(classOrInterfaceList.content[0].content.id)
+
+            expectToBeClassOrInterface(classOrInterface);
+        })
+    })
+
+    describe('When using J2U.getEnum()', () => {
+        test('should get a valid enum, when source has been setup', async () => {
+            const enumsList = await j2u.getEnums()
+            const enumModel = await j2u.getEnum(enumsList.content[0].content.id)
+
+            expectToBeEnum(enumModel);
+        })
+    })
+
+    describe('When using J2U.getClassRelation()', () => {
+        test('should get a valid classRelation, when source has been setup', async () => {
+            const classRelationList = await j2u.getClassRelations()
+            const classRelation = await j2u.getClassRelation(classRelationList.content[0].content.id)
+
+            expectToBeClassRelation(classRelation);
+        })
+    })
+
+    describe('When using J2U.getMethod()', () => {
+        test('should get a valid method, when source has been setup', async () => {
+            const classOrInterfaces = await j2u.getClassOrInterfaces()
+            const classOrInterface = classOrInterfaces.content[5]
+            const methods = await j2u.getMethods(extractIdFrom(classOrInterface._links.get("methods")!!))
+            const method = await j2u.getMethod(methods.content[0].content.id)
+
+            expectToBeMethod(method);
+        })
+    })
+
+    describe('When using J2U.getConstructor()', () => {
+        test('should get a valid constructor, when source has been setup', async () => {
+            const classOrInterfaces = await j2u.getClassOrInterfaces()
+            const classOrInterface = classOrInterfaces.content[5]
+            const constructors = await j2u.getConstructors(extractIdFrom(classOrInterface._links.get("constructors")!!))
+            const constructor = await j2u.getConstructor(constructors.content[0].content.id)
+
+            expectToBeConstructor(constructor);
+        })
+    })
+
+    describe('When using J2U.getField()', () => {
+        test('should get a valid field, when source has been setup', async () => {
+            const classOrInterfaces = await j2u.getClassOrInterfaces()
+            const classOrInterface = classOrInterfaces.content[5]
+            const fields = await j2u.getFields(extractIdFrom(classOrInterface._links.get("fields")!!))
+            const field = await j2u.getField(fields.content[0].content.id)
+
+
+            expectToBeField(field);
+        })
+    })
+
+    describe('When using J2U.getEnumConstant()', () => {
+        test('should get a valid enum constant, when source has been setup', async () => {
+            const enums = await j2u.getEnums()
+            const enumEntityModel = enums.content[0]
+            const enumConstants = await j2u.getEnumConstants(extractIdFrom(enumEntityModel._links.get("enumConstants")!!))
+            const enumConstant = await j2u.getEnumConstant(enumConstants.content[0].content.id)
+
+            expectToBeEnumConstant(enumConstant);
+        })
+    })
+
+
+    /*========================================================================*
+     *                        ADDITIONAL TEST HELPERS                         *
+     *========================================================================*/
+
+    /**
+     * Tests for properties of {@link EnumConstant}
+     * @param enumConstant to be tested.
+     */
+    function expectToBeEnumConstant(enumConstant: EntityModel<EnumConstant>) {
+        expect(enumConstant.content).toHaveProperty("id")
+        expect(enumConstant.content).toHaveProperty("name")
+    }
+
+    /**
+     * Tests for properties of {@link Field}
+     * @param field to be tested.
+     */
+    function expectToBeField(field: EntityModel<Field>) {
+        expect(field.content).toHaveProperty("id")
+        expect(field.content).toHaveProperty("typeName")
+        expect(field.content).toHaveProperty("name")
+        expect(field.content).toHaveProperty("visibility")
+        expect(field.content).toHaveProperty("isStatic")
+    }
+
+    /**
+     * Tests for properties of {@link Constructor}
+     * @param constructor to be tested.
+     */
+    function expectToBeConstructor(constructor: EntityModel<Constructor>) {
+        expect(constructor.content).toHaveProperty("id")
+        expect(constructor.content).toHaveProperty("name")
+        expect(constructor.content).toHaveProperty("signature")
+        expect(constructor.content).toHaveProperty("visibility")
+        expect(constructor.content).toHaveProperty("compilerGenerated")
+        expect(constructor.content).toHaveProperty("parameters")
+        expect(constructor.content).toHaveProperty("typeParameters")
+        expect(constructor.content).toHaveProperty("specifiedExceptions")
+        expect(constructor.content.specifiedExceptions).toBeDefined()
+        expect(constructor.content.specifiedExceptions).toBeInstanceOf(Array)
+        expect(constructor.content.parameters).toBeInstanceOf(Array)
+    }
+
+    /**
+     * Tests for properties of {@link Enum}
+     * @param enumModel to be tested.
+     */
+    function expectToBeEnum(enumModel: EntityModel<Enum>) {
+        expect(enumModel._links).toBeInstanceOf(Map)
+        expect(enumModel.content).toHaveProperty("id")
+        expect(enumModel.content).toHaveProperty("name")
+        expect(enumModel.content).toHaveProperty("packageName")
+    }
+
+    /**
+     * Tests for properties of {@link ClassRelation}
+     * @param classRelation to be tested.
+     */
+    function expectToBeClassRelation(classRelation: EntityModel<ClassRelation>) {
+        expect(classRelation._links).toBeInstanceOf(Map)
+        expect(classRelation.content).toHaveProperty("id")
+        expect(classRelation.content).toHaveProperty("relation")
+        expect(classRelation.content).toHaveProperty("fromId")
+        expect(classRelation.content).toHaveProperty("toId")
+    }
+
+    /**
+     * Tests for properties of {@link Method}
+     * @param method to be tested.
+     */
+    function expectToBeMethod(method: EntityModel<Method>) {
+        expect(method.content).toHaveProperty("id")
+        expect(method.content).toHaveProperty("name")
+        expect(method.content).toHaveProperty("returnType")
+        expect(method.content).toHaveProperty("signature")
+        expect(method.content).toHaveProperty("visibility")
+        expect(method.content).toHaveProperty("isStatic")
+        expect(method.content).toHaveProperty("parameters")
+        expect(method.content).toHaveProperty("typeParameters")
+        expect(method.content).toHaveProperty("specifiedExceptions")
+        expect(method.content.specifiedExceptions).toBeInstanceOf(Array)
+        expect(method.content.parameters).toBeInstanceOf(Array)
+        expect(method.content.typeParameters).toBeInstanceOf(Array)
+    }
+
+    /**
+     * Tests for properties of {@link ClassOrInterface}
+     * @param classOrInterface to be tested.
+     */
+    function expectToBeClassOrInterface(classOrInterface: EntityModel<ClassOrInterface>) {
+        expect(classOrInterface._links).toBeInstanceOf(Map)
+        expect(classOrInterface.content).toHaveProperty("id")
+        expect(classOrInterface.content).toHaveProperty("name")
+        expect(classOrInterface.content).toHaveProperty("packageName")
+        expect(classOrInterface.content).toHaveProperty("isGeneric")
+        expect(classOrInterface.content).toHaveProperty("isClass")
+        expect(classOrInterface.content).toHaveProperty("isExternal")
+    }
 })
