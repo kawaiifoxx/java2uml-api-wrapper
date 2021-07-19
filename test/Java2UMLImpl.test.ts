@@ -229,4 +229,55 @@ describe('All Get requests.', () => {
             expect(fields.content[0].content).toHaveProperty("isStatic")
         })
     })
+
+    describe('When using J2U.getEnumConstants()', () => {
+        test('should get a valid list of enum constants, when source has been setup', async () => {
+            const enums = await j2u.getEnums()
+            const enumEntityModel = enums.content[0]
+            const enumConstants = await j2u.getEnumConstants(extractIdFrom(enumEntityModel._links.get("enumConstants")!!))
+
+            expect(enumConstants).toBeDefined()
+            expect(enumConstants.content).toBeInstanceOf(Array)
+            expect(enumConstants._links).toBeInstanceOf(Map)
+            expect(enumConstants.content[0].content).toHaveProperty("id")
+            expect(enumConstants.content[0].content).toHaveProperty("name")
+        })
+    })
+
+    describe('When using J2U.getBody*()', () => {
+        test('should get a valid body, when source has been setup', async () => {
+            const classOrInterfaces = await j2u.getClassOrInterfaces()
+            const classOrInterface = classOrInterfaces.content[5]
+            const body = await j2u.getBodyByParentId(extractIdFrom(classOrInterface._links.get("body")!!))
+            const bodyByOwnId = await j2u.getBody(body.content.id)
+
+            expect(body).toBeDefined()
+            expect(body.content).toHaveProperty("id")
+            expect(body.content).toHaveProperty("content")
+            expect(body._links).toBeInstanceOf(Map)
+
+            expect(bodyByOwnId).toBeDefined()
+            expect(bodyByOwnId.content).toHaveProperty("id")
+            expect(bodyByOwnId.content).toHaveProperty("content")
+            expect(bodyByOwnId._links).toBeInstanceOf(Map)
+        })
+    })
+
+    describe('When using J2U.getCallGraph()', () => {
+        test('should get a valid list of CallGraphRelation, when source has been setup', async () => {
+            const classOrInterfaces = await j2u.getClassOrInterfaces()
+            const classOrInterface = classOrInterfaces.content[5]
+            const methods = await j2u.getMethods(extractIdFrom(classOrInterface._links.get("methods")!!))
+            const method = methods.content[0]
+            const callGraphRelationList = await j2u.getCallGraph(extractIdFrom(method._links.get("callGraph")!!))
+
+            expect(callGraphRelationList).toBeDefined()
+            expect(callGraphRelationList.content).toBeInstanceOf(Array)
+            expect(callGraphRelationList._links).toBeInstanceOf(Map)
+
+            expect(callGraphRelationList.content[0].content).toHaveProperty("from")
+            expect(callGraphRelationList.content[0].content).toHaveProperty("to")
+        })
+    })
+
 })
