@@ -81,13 +81,19 @@ export interface Java2UML {
      * Get all the {@link EnumConstant}s present in {@link Enum}
      * @param id of {@link Enum}
      */
-    getEnumConstants(id: number): Promise<EntityModel<EnumConstant>[]>
+    getEnumConstants(id: number): Promise<EntityModel<EntityModel<EnumConstant>[]>>
+
+    /**
+     * Get Code snippet with given id.
+     * @param id id of the body.
+     */
+    getBody(id: number): Promise<EntityModel<Body>>
 
     /**
      * Get Code snippet with given parent id.
      * @param id id of parent of the {@link Body}
      */
-    getBody(id: number): Promise<EntityModel<Body>>
+    getBodyByParentId(id: number): Promise<EntityModel<Body>>
 
     /**
      * Get {@link ClassOrInterface} with given id.
@@ -116,8 +122,9 @@ export interface Java2UML {
     /**
      * Get call graph of {@link Method} with provided id.
      * @param id of {@link Method} for which you want call graph.
+     * @param packageName to scope the call graph
      */
-    getCallGraph(id: number): Promise<EntityModel<EntityModel<CallGraphRelation>[]>>
+    getCallGraph(id: number, packageName: string): Promise<EntityModel<EntityModel<CallGraphRelation>[]>>
 
     /**
      * Get {@link Constructor} with given id.
