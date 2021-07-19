@@ -1,14 +1,11 @@
-import {LightWeight} from "./LightWeight";
-
-
 /**
  * Defines a relation between two classes.
  *
  * @author kawaiifoxx
  */
 export interface ClassRelation {
-    from: LightWeight
-    to: LightWeight
+    fromId?: number
+    toId?: number
     relation: string
     id: number
 }
