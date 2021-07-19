@@ -52,30 +52,30 @@ export interface Java2UML {
     /**
      * Get all the {@link Enum}s present in parsed java code base.
      */
-    getEnums(): Promise<EntityModel<Enum>[]>
+    getEnums(): Promise<EntityModel<EntityModel<Enum>[]>>
 
     /**
      * Get all the {@link ClassRelation}s present in parsed java code base.
      */
-    getClassRelations(): Promise<EntityModel<ClassRelation>[]>
+    getClassRelations(): Promise<EntityModel<EntityModel<ClassRelation>[]>>
 
     /**
      * Get all the {@link Method}s present in {@link ClassOrInterface} or {@link Enum}
      * @param id of {@link ClassOrInterface} or {@link Enum}
      */
-    getMethods(id: number): Promise<EntityModel<Method>[]>
+    getMethods(id: number): Promise<EntityModel<EntityModel<Method>[]>>
 
     /**
      * Get all the {@link Constructor}s present in {@link ClassOrInterface} or {@link Enum}
      * @param id of {@link ClassOrInterface} or {@link Enum}
      */
-    getConstructors(id: number): Promise<EntityModel<Constructor>[]>
+    getConstructors(id: number): Promise<EntityModel<EntityModel<Constructor>[]>>
 
     /**
      * Get all the {@link Field}s present in {@link ClassOrInterface} or {@link Enum}
      * @param id of {@link ClassOrInterface} or {@link Enum}
      */
-    getFields(id: number): Promise<EntityModel<Field>[]>
+    getFields(id: number): Promise<EntityModel<EntityModel<Field>[]>>
 
     /**
      * Get all the {@link EnumConstant}s present in {@link Enum}
