@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/kawaiifoxx/java2uml-api-wrapper#readme",
   "devDependencies": {
-    "@types/jest": "^26.0.24",
+    "@types/jest": "^27.0.0",
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
