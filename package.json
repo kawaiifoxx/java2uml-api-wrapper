@@ -33,7 +33,7 @@
   "dependencies": {
     "@types/lokijs": "^1.5.7",
     "form-data": "^4.0.0",
-    "json-server": "^0.16.3",
+    "json-server": "^0.17.0",
     "lokijs": "^1.5.12",
     "winston": "^3.3.3"
   }
